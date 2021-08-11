@@ -1,23 +1,26 @@
 {
   "development": {
     "username": "root",
-    "password": "`${process.env.MOT_DE_PASSE_ROOT}`",
-    "database": "database_development",
-    "host": "127.0.0.1",
+    "password": "groupomania",
+    "database": "groupomania",
+    "host": "localhost",
+    "port": 8887,
     "dialect": "mysql"
   },
   "test": {
     "username": "root",
-    "password": "`${process.env.MOT_DE_PASSE_ROOT}`",
-    "database": "database_test",
-    "host": "127.0.0.1",
+    "password": "`${process.env.MP_DB_GROUPOMANIA}`",
+    "database": "groupomania",
+    "host": "localhost",
+    "port": 8887,
     "dialect": "mysql"
   },
   "production": {
     "username": "root",
-    "password": "`${process.env.MOT_DE_PASSE_ROOT}`",
-    "database": "database_production",
-    "host": "127.0.0.1",
+    "password": "`${process.env.MP_DB_GROUPOMANIA}`",
+    "database": "groupomania",
+    "host": "localhost",
+    "port": 8887,
     "dialect": "mysql"
   }
 }

@@ -19,7 +19,7 @@ exports.createComment = (req, res, next) => {
             })
             comment.save()
                 .then(() => res.status(201).json({ message: 'Votre commentaire a bien été créé !' }))
-                .catch(error => res.status(400).json({ error: '⚠ Oops, une erreur s\'est produite !' }));
+                .catch(error => res.status(400).json({ error: 'Une erreur est survenue' }));
         } else {
             return res.status(404).json({ error: 'Message non trouvé'})
         }
