@@ -3,6 +3,7 @@ require('dotenv').config();
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv').config(); 
 const mysql = require('mysql2');
+const { Sequelize } = require('sequelize');
 
 const app = express();
 
@@ -15,17 +16,30 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 
-const db = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD
+/*const db = mysql.createConnection({
+    host: "localhost:8889",
+    user: "groupomania",
+    password: "groupomania",
+    database: "groupomania"
   });
 
 db.connect(function(err) {
     if (err) throw err;
     console.log("Connecté à la base de données MySQL!");
+});*/
+
+const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
+  dialect: process.env.DB_DIALECT,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT
 });
 
+try {
+  sequelize.authenticate();
+  console.log('Connecté à la base de données MySQL!');
+} catch (error) {
+  console.error('Impossible de se connecter, erreur suivante :', error);
+}
 
 // Permet d'importer les routers user, post 
 const userRoutes = require('./routes/user');
