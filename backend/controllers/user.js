@@ -6,6 +6,9 @@ const db = require('../models/index');
 // import du modèle de données pour les utilisateurs
 const User = require('../models/User');
 
+// import de validator pour valider les entrées utilisateurs
+const validator = require('validator');
+
 const passwordValidator = require('password-validator');
 
 // création du schéma de validation du mot de passe
@@ -26,43 +29,44 @@ exports.signup = (req, res, next) => {
     const userName = req.body.userName;
     const email = req.body.email;
     const password = req.body.password;
-
+    console.log(userName);
      // vérification de la conformité du mot de passe
-    if (!schemaPassword.validate(req.body.password)) {
-        return res.status(400).json({ error: 'Le mot de passe doit contenir entre 8 et 20 caractères dont au moins une majuscule, une minusucle, deux chiffres et un caractère spécial'})
-    }
-    
+        if (validator.isStrongPassword(password)) {
+            console.log(password);
+            return res.status(400).json({ error: 'Le mot de passe doit contenir entre 8 et 20 caractères dont au moins une majuscule, une minusucle, deux chiffres et un caractère spécial'})
+   }
     // vérification pour savoir si l'utilisateur existe déjà dans la db
     db.User.findOne({
         attributes: [ 'userName' || 'email'],
-        where: {
+        where: { 
             userName: userName,
             email: email
         }
-    })
-
-    .then(userAlreadyExist => {
+    },console.log(email))
+    .then(userExist => {
         // si l'utilisateur n'existe pas on hash le mot de passe avant de l'enregistrer dans la db
-        if (!userAlreadyExist) {
+        if (!userExist) {
             bcrypt.hash(req.body.password, 10)   
             .then (hash => {
-                const user = new User({
+                const user = db.User.build({
                     userName: req.body.userName,
                     email: req.body.email,
                     password: hash,
                     isAdmin: 0
-                });
+                }, console.log(hash));
                 user.save()
                     .then(() => res.status(201).json({ message: 'Votre compte a bien été créé' }))
-                    .catch(error => res.status(400).json({ error }));
+                    .catch(error => res.status(400).json({ error : 'échec de la création du compte'}));
             })
-            .catch(error => res.status(500).json({ error }));
+            .catch(error => res.status(500).json({ message: 'erreur d\'inscription' }));
         } else {
             return res.status(404).json({ error: 'Ce compte existe déjà' })
         }
     })
-    .catch(error => res.status(500).json({ error }));
+    .catch(error => res.status(500).json({ error: 'impossible de créer ce compte' }));
 }
+
+
 
 // connexion d'un utilisateur déjà inscrit
 exports.login = (req, res, next) => {

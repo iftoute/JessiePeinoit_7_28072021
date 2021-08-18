@@ -16,18 +16,6 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 
-/*const db = mysql.createConnection({
-    host: "localhost:8889",
-    user: "groupomania",
-    password: "groupomania",
-    database: "groupomania"
-  });
-
-db.connect(function(err) {
-    if (err) throw err;
-    console.log("Connecté à la base de données MySQL!");
-});*/
-
 const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
   dialect: process.env.DB_DIALECT,
   host: process.env.DB_HOST,
