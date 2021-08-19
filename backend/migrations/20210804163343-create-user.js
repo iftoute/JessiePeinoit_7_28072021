@@ -25,14 +25,15 @@ module.exports = {
         type: Sequelize.BOOLEAN
       },
       imageUrl: {
+        allowNull: true,
         type: Sequelize.STRING
       },
       createdAt: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE
       },
       updatedAt: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE
       }
     });

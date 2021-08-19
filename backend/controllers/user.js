@@ -31,26 +31,28 @@ exports.signup = (req, res, next) => {
     const password = req.body.password;
     console.log(userName);
      // vérification de la conformité du mot de passe
-        if (validator.isStrongPassword(password)) {
+        if (!validator.isStrongPassword(password)) {
             console.log(password);
             return res.status(400).json({ error: 'Le mot de passe doit contenir entre 8 et 20 caractères dont au moins une majuscule, une minusucle, deux chiffres et un caractère spécial'})
    }
     // vérification pour savoir si l'utilisateur existe déjà dans la db
+
     db.User.findOne({
-        attributes: [ 'userName' || 'email'],
-        where: { 
-            userName: userName,
-            email: email
-        }
-    },console.log(email))
+    where: { 
+        userName: userName,
+        email: email
+    },
+    attributes: [ 'userName' || 'email']
+    })
     .then(userExist => {
+        console.log(userExist);
         // si l'utilisateur n'existe pas on hash le mot de passe avant de l'enregistrer dans la db
         if (!userExist) {
             bcrypt.hash(req.body.password, 10)   
             .then (hash => {
                 const user = db.User.build({
-                    userName: req.body.userName,
-                    email: req.body.email,
+                    userName: userName,
+                    email: email,
                     password: hash,
                     isAdmin: 0
                 }, console.log(hash));
