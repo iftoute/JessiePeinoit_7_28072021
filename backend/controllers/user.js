@@ -85,7 +85,7 @@ exports.login = (req, res, next) => {
                     return res.status(401).json({ error: 'Mot de passe incorrect !' });
                 }
                 res.status(200).json({
-                    userId: user.id,
+                    id: user.id,
                     isAdmin: user.isAdmin,
                     userName: user.userName,
                     imageUrl: user.imageUrl,
@@ -107,10 +107,16 @@ exports.login = (req, res, next) => {
 // Accès au profil de l'utilisateur
 exports.getUserProfile = (req, res, next) => {
     const id = req.params.id;
+    const email = req.body.email;
+    const password = req.body.password;
+
     db.User.findOne({
-        attributes: [ 'id', 'userName', 'email', 'isAdmin', 'imageUrl' ],
-        where: { id: id }
-    })
+        where: { 
+            id: id,
+            email: email
+        },
+        attributes: [ 'id' || 'email']
+        })
     .then(user => {
         if(user) {
             res.status(200).json(user);
