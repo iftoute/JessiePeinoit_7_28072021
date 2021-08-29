@@ -17,61 +17,95 @@
     <div class="form-row">
       <input v-model="password" class="form-row__input" type="password" placeholder="Mot de passe"/>
     </div>
+    <div class="form-row alert alert-danger alert-dismissible fade show" v-if="mode == 'login' && status == 'error_login'">
+        <span class="" role="alert">
+            Adresse et/ou mot de passe invalide
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </span>
+    </div>
+        <div class="form-row alert alert-danger alert-dismissible fade show" v-if="mode == 'create' && status == 'error_signup'">
+        <span class="" role="alert">
+            Adresse mail déjà utilisée
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </span>
+    </div>
+
     <div class="form-row">
-      <button @click="login()" class="button btn btn-primary" v-if="mode == 'login'">Connexion</button>
-      <button @click="signup()" class="button btn btn-primary" v-else>Créer mon compte</button>
+      <button @click="login()" class="button btn btn-primary" v-if="mode == 'login'">
+          <span v-if="status == 'loading'">Connexion en cours...</span>
+          <span v-else>Connexion</span>
+      </button>
+      <button @click="signup()" class="button btn btn-primary" v-else>
+        <span v-if="status == 'loading'">Création en cours...</span>
+        <span v-else>Créer mon compte</span>
+      </button>
+        <span></span>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 
-export default {
-  name: 'Login',
-  data: function () {
+  export default {
+    name: 'Login',
+    data: function () {
     return {
-      mode: 'login',
-      userName: '',
-      email: '',
-      password: ''
-    }
-  },
-  methods: {
-    switchToCreateAccount: function () {
-      this.mode = 'create'
-    },
-    switchToLogin: function () {
-      this.mode = 'login'
-    },
-    login: function () {
-      this.$store.dispatch('login', {
-        email: this.email,
-        password: this.password
-      }).then(function (response) {
-          console.log(response)
-      }, function (error) {
-          console.log(error)
-      })
+        mode: 'login',
+        userName: '',
+        email: '',
+        password: '',
     }
     },
-    signup: function () {
-      console.log(this.email, this.userName, this.password)
-      this.$store.dispatch('signup', {
-        email: this.email,
-        userName: this.userName,
-        password: this.password
-      }).then(function (response) {
-          console.log(response)
-      }, function (error) {
-          console.log(error)
-      })
+    mounted: function () {
+        if (this.$store.state.user.userId != -1) {
+            this.$router.push('/profile');
+            return
+        }
+    },
+    computed: {
+        ...mapState(['status'])
+    },
+    methods: {
+        switchToCreateAccount: function () {
+        this.mode = 'create';
+        },
+        switchToLogin: function () {
+        this.mode = 'login';
+        },
+        login: function () {
+            const self = this
+            this.$store.dispatch('login', {
+                email: this.email,
+                password: this.password
+            }).then(function() {
+                self.$router.push('/profile')
+            }), function(error) {
+                console.log(error)
+            }
+        },
+        signup: function () {
+            const self = this
+            this.$store.dispatch('signup', {
+                email: this.email,
+                userName: this.userName,
+                password: this.password
+            }).then(function() {
+                self.login()
+            }), function(error) {
+                console.log(error);
+            }
+        },
     }
   }
-
 </script>
 
 <style>
-body {
+  body {
     background-image: linear-gradient(62deg, #fcb4a4 0%, #fcecec 100%);
 }
 .form-row {
@@ -104,4 +138,4 @@ body {
     color: #fc9a84;
     margin-bottom: 30px;
   }
-</style>
+</style> 
