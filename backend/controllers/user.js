@@ -108,14 +108,13 @@ exports.login = (req, res, next) => {
 exports.getUserProfile = (req, res, next) => {
     const id = req.params.id;
     const email = req.body.email;
-    const password = req.body.password;
 
     db.User.findOne({
         where: { 
-            id: id,
-            email: email
+            // id: id
+             email: email
         },
-        attributes: [ 'id' || 'email']
+        attributes: [ 'id', 'username', 'email', 'isAdmin', 'imageUrl']
         })
     .then(user => {
         if(user) {
